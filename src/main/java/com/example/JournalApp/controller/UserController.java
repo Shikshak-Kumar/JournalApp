@@ -3,7 +3,9 @@ package com.example.JournalApp.controller;
 import com.example.JournalApp.entity.User;
 import com.example.JournalApp.repository.UserRepository;
 import com.example.JournalApp.service.UserService;
+import com.example.JournalApp.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authorization.method.AuthorizeReturnObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private WeatherService weatherService;
+
     @GetMapping
     public ResponseEntity<?> getAllUsers(){
         List<User> all = userService.getAll();
@@ -29,6 +34,17 @@ public class UserController {
             return new ResponseEntity<>(all, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/greeting")   // ← added
+    public ResponseEntity<String> greeting(Authentication authentication){
+        try {
+            String username = authentication.getName();
+            String greeting = weatherService.getWeatherSummary("Mumbai", username);
+            return new ResponseEntity<>(greeting, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 //    @GetMapping("id/{myId}")

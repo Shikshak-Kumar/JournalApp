@@ -1,17 +1,21 @@
 package com.example.JournalApp.apiResponse;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
-public class weatherApiResponse {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+public class WeatherApiResponse {
 //    private Request request;
 //    private Location location;
     private Current current;
 
-
-    public class Current{
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Current{
         @JsonProperty("observation_time")
         private String observationTime;
 
@@ -43,7 +47,7 @@ public class weatherApiResponse {
         public int visibility;
 
         @JsonProperty("is_day")
-        public String is_day;
+        public String isDay;
     }
 
 //    public class Location{
