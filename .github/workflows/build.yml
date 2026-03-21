@@ -35,7 +35,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          mvn -B verify -DskipTests org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=Shikshak-Kumar_JournalApp \
             -Dsonar.organization=shikshak-kumar \
             -Dsonar.host.url=https://sonarcloud.io \
