@@ -1,6 +1,8 @@
 package com.example.JournalApp.service;
 
 import com.example.JournalApp.apiResponse.WeatherApiResponse;
+import com.example.JournalApp.cache.AppCache;
+import com.example.JournalApp.constants.Placeholders;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,14 +16,14 @@ public class WeatherService {
     @Value("${weather.api.key}")
     private String apiKey;
 
-    @Value("${weather.api.url}")
-    private String apiUrl;
-
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private AppCache appCache;
+
     public WeatherApiResponse getWeather(String city){
-        String url = apiUrl + "?access_key=" + apiKey + "&query=" + city;
+        String url = appCache.appCache.get(AppCache.keys.WEATHER_API.toString()).replace(Placeholders.API_KEY,apiKey).replace(Placeholders.CITY,city);
         try{
             return restTemplate.getForObject(url,WeatherApiResponse.class);
         } catch (Exception e){

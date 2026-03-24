@@ -36,7 +36,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/greeting")   // ← added
+    @GetMapping("/greeting")
     public ResponseEntity<String> greeting(Authentication authentication){
         try {
             String username = authentication.getName();

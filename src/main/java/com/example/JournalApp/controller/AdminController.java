@@ -1,5 +1,6 @@
 package com.example.JournalApp.controller;
 
+import com.example.JournalApp.cache.AppCache;
 import com.example.JournalApp.entity.User;
 import com.example.JournalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,15 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AppCache appCache;
+
+    @GetMapping("/clear-app-cache")
+    public void clearAppCache(){
+        // baar baar application reaload karni ki jagah hit this url to update the cache map
+        appCache.init();
+    }
 
     @GetMapping("/all-users")
     public ResponseEntity<?> getAllUsers(){
