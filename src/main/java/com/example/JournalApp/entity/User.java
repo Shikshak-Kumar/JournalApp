@@ -1,6 +1,8 @@
 package com.example.JournalApp.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -14,6 +16,8 @@ import java.util.List;
 @Data // : Equivalent to @Getter @Setter @RequiredArgsConstructor @ToString @EqualsAndHashCode.
 // Using Lombok plugin "Data" : Compile time pe apne aap code generate ho jata hai 
 @Document(collection = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id // map as primary key
@@ -25,9 +29,10 @@ public class User {
     private String userName;
     @NonNull
     private String password;
-//    @NonNull
-//    private String email;
-//    private boolean sentimentAnalysis;
+    @Indexed(unique = true, sparse = true)
+    @NonNull
+    private String email;
+    private boolean sentimentAnalysis;
 
     @DBRef // need to add for reference
     private List<JournalEntry> journalEntries = new ArrayList<>();

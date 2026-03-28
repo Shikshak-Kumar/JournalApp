@@ -35,7 +35,11 @@ public class UserDetailsServiceImpTests {
 
     @Test
     void loadByUserNameTest(){
-        User mockUser = new User("ram","dfdsdsdgs");
+        User mockUser = new User();
+        mockUser.setUserName("ram");
+        mockUser.setPassword("dfdsdsdgs");
+        mockUser.setEmail("ram@gmail.com");
+        mockUser.setSentimentAnalysis(true);
         mockUser.setRoles(new ArrayList<>(List.of("USER","ADMIN")));
         when(userRepository.findByUserName(ArgumentMatchers.anyString()))
                 .thenReturn(mockUser);

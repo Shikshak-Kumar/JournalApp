@@ -6,8 +6,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 
+@Component
 public class UserRepositoryImpl {
 
     @Autowired
@@ -34,11 +37,8 @@ public class UserRepositoryImpl {
 //
 //        ));
 
-//        Criteria.where("email").regex(
-//                "^[A-Za-z0-9+_.-]+@[A-Za-z0-9-]+\\.[A-Za-z]{2,}$",
-//                "i"
-//        );
-//        Criteria.where("sentimentAnalysis").exists(true);
+        query.addCriteria(Criteria.where("email").regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9-]+\\.[A-Za-z]{2,}$", "i"));
+        query.addCriteria(Criteria.where("sentimentAnalysis").is(true));
         query.addCriteria(Criteria.where("roles").in("USER","ADMIN"));
         List<User> users = mongoTemplate.find(query,User.class);
         return users;

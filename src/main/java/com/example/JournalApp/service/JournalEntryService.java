@@ -3,7 +3,9 @@ package com.example.JournalApp.service;
 import com.example.JournalApp.entity.JournalEntry;
 import com.example.JournalApp.entity.User;
 import com.example.JournalApp.repository.JournalEntryRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import java.util.Date;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,9 @@ public class JournalEntryService {
     @Transactional // but ise use karne ke lie main file me add enable trans
     public void saveEntry(JournalEntry journalEntry, String userName){
         User user = userService.findByUserName(userName);
+        if (journalEntry.getDate() == null) {
+            journalEntry.setDate(new Date());
+        }
         JournalEntry saved = journalEntryRepository.save(journalEntry);
         // give a thought yaha pe agar code fat gaya to kya karoge : as inconsistency aa jayegi
         //  agar ise transaction bana dia to no pro fir
@@ -36,6 +41,9 @@ public class JournalEntryService {
     }
 
     public void saveEntry(JournalEntry journalEntry){
+        if (journalEntry.getDate() == null) {
+            journalEntry.setDate(new Date());
+        }
         journalEntryRepository.save(journalEntry);
     }
 
@@ -65,5 +73,25 @@ public class JournalEntryService {
             throw new RuntimeException("An error occured while deleting the entry.",e);
         }
         return removed;
+    }
+
+    /**
+     * Temporary migration logic: 
+     * Sets the current Date for all entries that have 'null' in the DB.
+     */
+    @PostConstruct
+    public void fixNullDates() {
+        List<JournalEntry> allEntries = journalEntryRepository.findAll();
+        long count = 0;
+        for (JournalEntry entry : allEntries) {
+            if (entry.getDate() == null) {
+                entry.setDate(new Date());
+                journalEntryRepository.save(entry);
+                count++;
+            }
+        }
+        if (count > 0) {
+            log.info("Migration successful: Added date to {} journal entries.", count);
+        }
     }
 }
