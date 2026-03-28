@@ -25,6 +25,9 @@ public class User {
     private String userName;
     @NonNull
     private String password;
+//    @NonNull
+//    private String email;
+//    private boolean sentimentAnalysis;
 
     @DBRef // need to add for reference
     private List<JournalEntry> journalEntries = new ArrayList<>();
