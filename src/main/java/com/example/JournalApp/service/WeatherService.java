@@ -22,10 +22,21 @@ public class WeatherService {
     @Autowired
     private AppCache appCache;
 
+    @Autowired
+    private RedisService redisService;
+
     public WeatherApiResponse getWeather(String city){
+        WeatherApiResponse weatherApiResponse = redisService.get("weather_of_" + city, WeatherApiResponse.class);
+        if(weatherApiResponse!=null){
+            return weatherApiResponse;
+        }
         String url = appCache.appCache.get(AppCache.keys.WEATHER_API.toString()).replace(Placeholders.API_KEY,apiKey).replace(Placeholders.CITY,city);
         try{
-            return restTemplate.getForObject(url,WeatherApiResponse.class);
+            WeatherApiResponse body = restTemplate.getForObject(url,WeatherApiResponse.class);
+            if(body!=null){
+                redisService.set("weather_of_"+city,body,300l);  // 300 secs long
+            }
+            return body;
         } catch (Exception e){
             log.error("Error fetching weather for city {}: ", city, e);
             return null;
