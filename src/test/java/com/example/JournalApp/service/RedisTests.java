@@ -23,4 +23,5 @@ public class RedisTests {
         Object mail = redisTemplate.opsForValue().get("email");
         int a = 1;
     }
+//    checking github
 }
