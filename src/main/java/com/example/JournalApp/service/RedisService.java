@@ -13,31 +13,31 @@ import java.util.concurrent.TimeUnit;
 public class RedisService {
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
-//    Generic type banane ke liye write <T>
-    public <T> T get(String key, Class<T> entityClass){
-       try{
-           Object o  = redisTemplate.opsForValue().get(key);
-//        we have to convert our object o into pojo
-           ObjectMapper mapper = new ObjectMapper();
-           return mapper.readValue(o.toString(),entityClass);
-       } catch (Exception e) {
-           log.error("Exception",e);
-           return null;
-       }
+    public void set(String key, Object value, Long ttlSeconds) {
+        try {
+            log.info("Redis SET key={} ttl={}s", key, ttlSeconds);
+            redisTemplate.opsForValue().set(key, value, ttlSeconds, TimeUnit.SECONDS);
+            log.info("Redis SET success for key={}", key);
+        } catch (Exception e) {
+            log.error("Redis SET failed for key={} | Error: {}", key, e.getMessage(), e);
+        }
     }
 
-//    just checking github push code
-
-    public void set(String key,Object o, Long ttl){
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonValue = mapper.writeValueAsString(o);
-//            if ttl = -1 then data saves without expiry
-           redisTemplate.opsForValue().set(key,jsonValue,ttl, TimeUnit.SECONDS);
+    public <T> T get(String key, Class<T> clazz) {
+        try {
+            log.info("Redis GET key={}", key);
+            Object value = redisTemplate.opsForValue().get(key);
+            if (value == null) {
+                log.info("Redis GET key={} → MISS (null)", key);
+                return null;
+            }
+            log.info("Redis GET key={} → HIT", key);
+            return clazz.cast(value);
         } catch (Exception e) {
-            log.error("Exception",e);
+            log.error("Redis GET failed for key={} | Error: {}", key, e.getMessage(), e);
+            return null;
         }
     }
 }
