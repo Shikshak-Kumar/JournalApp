@@ -4,6 +4,7 @@ import com.example.JournalApp.entity.User;
 import com.example.JournalApp.repository.UserRepository;
 import com.example.JournalApp.service.UserService;
 import com.example.JournalApp.service.WeatherService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authorization.method.AuthorizeReturnObject;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name="User APIs", description = "Read, Update and Delete User")
 public class UserController {
 
     @Autowired

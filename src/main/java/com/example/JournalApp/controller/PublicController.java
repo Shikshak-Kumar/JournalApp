@@ -1,11 +1,13 @@
 package com.example.JournalApp.controller;
 
 import com.example.JournalApp.apiResponse.WeatherApiResponse;
+import com.example.JournalApp.dto.DtoUser;
 import com.example.JournalApp.entity.User;
 import com.example.JournalApp.service.UserDetailsServiceImp;
 import com.example.JournalApp.service.UserService;
 import com.example.JournalApp.service.WeatherService;
 import com.example.JournalApp.utils.JwtUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/public")
+@Tag(name="Public APIs", description = "Read, Update and Delete User")
 public class PublicController {
 
     @Autowired
@@ -38,10 +41,21 @@ public class PublicController {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @GetMapping("health-check")
+    public ResponseEntity<?> healthCheck(){
+        return new ResponseEntity<>("Haa badia chal rha hai bhai tera server khush reh.",HttpStatus.OK);
+    }
+
     @PostMapping("/signup")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
+    public ResponseEntity<String> createUser(@RequestBody DtoUser user) {
         try {
-            userService.saveNewUser(user);
+            // ALways use DTO for Swagger
+            User newUser = new User();
+            newUser.setUserName(user.getUserName());
+            newUser.setEmail(user.getEmail());
+            newUser.setSentimentAnalysis(user.isSentimentAnalysis());
+            newUser.setPassword(user.getPassword());
+            userService.saveNewUser(newUser);
             return new ResponseEntity<>("signup succefful for the user: "+user.getUserName(), HttpStatus.CREATED);
 
         } catch (Exception e) {
